@@ -1,66 +1,196 @@
 "use client";
+
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import Chart from "./components/Chart";
+
+type filterType = {
+  dataYear: [
+    {
+      year: string;
+      yearLink: string;
+    }
+  ];
+  dataType: [
+    {
+      type: string;
+      typeLink: string;
+    }
+  ];
+  dataMeetingKey: [
+    {
+      meetingKey: string;
+      meetingKeyLink: string;
+    }
+  ];
+  table: [{ th?: string }];
+  tableTd: Array<any>;
+};
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [drivers, setDrivers] = useState<any[]>([]);
+  const [chart, setChart] = useState(false);
+  const [type, setType] = useState("");
+  const [api, setApi] = useState<string>("/en/results.html/2023/races.html");
+  const [filter, setFilter] = useState<filterType>({
+    dataYear: [
+      {
+        year: "",
+        yearLink: "",
+      },
+    ],
+    dataType: [
+      {
+        type: "",
+        typeLink: "",
+      },
+    ],
+    dataMeetingKey: [
+      {
+        meetingKey: "",
+        meetingKeyLink: "",
+      },
+    ],
+    table: [{ th: "" }],
+    tableTd: [],
+  });
 
-  useEffect(() => {
+  const callAPI = async () => {
+    const data = { url: api };
     setIsLoading(true);
-    axios
-      .get("/api/driver2023")
+    await axios
+      .post("/api/filter", { data })
       .then((res) => {
-        setDrivers(res.data);
+        setFilter(res.data);
       })
       .finally(() => setIsLoading(false));
-  }, []);
+  };
+
+  useEffect(() => {
+    callAPI();
+  }, [api]);
+
+  const handleChart = (type: string) => {
+    if (type === "Teams" || type === "DRIVERS") {
+      setChart(true);
+      setType(type);
+    } else {
+      setChart(false);
+    }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  console.log(drivers);
-
   return (
-    <div className="bg-gray-200 min-h-screen py-10">
-      <div className="container mx-auto">
-        <h1 className="text-center text-gray-900 text-2xl font-bold py-6">
-          2023 Driver Standings
-        </h1>
-        <table className="table-auto w-full text-gray-700 border-collapse text-left">
-          <thead>
-            <tr>
-              <th>POS</th>
-              <th>DRIVER</th>
-              <th>NATIONALITY</th>
-              <th>CAR</th>
-              <th>PTS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {drivers.map((driver, index) => {
-              return (
-                <tr
-                  key={driver.firstName}
-                  className={index % 2 !== 0 ? "bg-gray-300" : ""}
-                >
-                  <td className="p-3 border border-slate-600">{index + 1}</td>
-                  <td className="p-3 border border-slate-600">
-                    {driver.firstName} {driver.lastName}
-                  </td>
-                  <td className="p-3 border border-slate-600">
-                    {driver.nation}
-                  </td>
-                  <td className="p-3 border border-slate-600">{driver.car}</td>
-                  <td className="p-3 border border-slate-600 text-center">
-                    {driver.point}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <div className="w-screen overflow-y-hidden relative">
+      <div className="min-h-screen p-10">
+        <div className="w-full">
+          <div className="px-4 pt-4">
+            <h3 className="text-gray-700 font-bold text-xl">Filter</h3>
+            <p className="text-gray-700 text-sm">
+              <i>Pick one of below</i>
+            </p>
+          </div>
+          <div className="flex justify-center h-60 p-3">
+            <ul className="text-gray-600 h-full overflow-auto flex-1">
+              {filter.dataYear.map((data, index) => {
+                return (
+                  <li key={index}>
+                    <span
+                      className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
+                      onClick={() => {
+                        setApi(data.yearLink);
+                      }}
+                    >
+                      {data.year}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <ul className="text-gray-600 h-full overflow-auto flex-1">
+              {filter.dataType.map((data, index) => {
+                return (
+                  <li key={index}>
+                    <span
+                      className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
+                      onClick={() => {
+                        setApi(data.typeLink);
+                        handleChart(data.type);
+                      }}
+                    >
+                      {data.type}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <ul className="text-gray-600 h-full overflow-auto flex-1">
+              {filter.dataMeetingKey.map((data, index) => {
+                return (
+                  <li key={index}>
+                    <span
+                      className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
+                      onClick={() => {
+                        setApi(data.meetingKeyLink);
+                        setChart(false);
+                      }}
+                    >
+                      {data.meetingKey}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+        <div className="p-4">
+          <h2 className="text-gray-900 mb-4 p-3 text-center font-semibold text-xl">
+            RACE RESULTS
+          </h2>
+          <table className="table-auto w-full text-gray-700 border-collapse text-left">
+            <thead>
+              <tr>
+                {filter.table.map((th, index) => {
+                  return th?.th ? (
+                    <th key={index} className="bg-red-300 p-2 text-lg">
+                      {th?.th}
+                    </th>
+                  ) : (
+                    ""
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {filter.tableTd.map((td, index) => {
+                return (
+                  <tr
+                    key={index}
+                    className={index % 2 === 0 ? "bg-gray-300" : ""}
+                  >
+                    {td[0] && <td className="py-3 px-1">{td[0]}</td>}
+                    {td[1] && <td className="py-3 px-1">{td[1]}</td>}
+                    {td[2] && <td className="py-3 px-1">{td[2]}</td>}
+                    {td[3] && <td className="py-3 px-1">{td[3]}</td>}
+                    {td[4] && <td className="py-3 px-1">{td[4]}</td>}
+                    {td[5] && <td className="py-3 px-1">{td[5]}</td>}
+                    {td[6] && <td className="py-3 px-1">{td[6]}</td>}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {chart && (
+          <div className="w-full">
+            <Chart dataChart={filter} type={type} />
+          </div>
+        )}
       </div>
     </div>
   );
