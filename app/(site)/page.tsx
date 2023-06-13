@@ -84,71 +84,79 @@ const Page = () => {
   }
 
   return (
-    <div className="w-screen overflow-y-hidden relative">
-      <div className="min-h-screen p-10">
-        <div className="w-full">
+    <div className="w-full overflow-y-hidden relative">
+      <div className="min-h-screen">
+        <div className="w-full bg-white rounded p-3">
           <div className="px-4 pt-4">
             <h3 className="text-gray-700 font-bold text-xl">Filter</h3>
             <p className="text-gray-700 text-sm">
               <i>Pick one of below</i>
             </p>
           </div>
-          <div className="flex justify-center h-60 p-3">
-            <ul className="text-gray-600 h-full overflow-auto flex-1">
-              {filter.dataYear.map((data, index) => {
-                return (
-                  <li key={index}>
-                    <span
-                      className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
-                      onClick={() => {
-                        setApi(data.yearLink);
-                      }}
-                    >
-                      {data.year}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
+          <div className="flex justify-center h-60 p-3 ">
+            <div className="p-3 flex-1">
+              <h3 className="text-gray-700 font-semibold mb-3">Year races</h3>
+              <ul className="text-gray-600 h-40 overflow-auto  bg-gray-100 rounded">
+                {filter.dataYear.map((data, index) => {
+                  return (
+                    <li key={index}>
+                      <span
+                        className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
+                        onClick={() => {
+                          setApi(data.yearLink);
+                        }}
+                      >
+                        {data.year}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+            <div className="p-3 flex-1">
+              <h3 className="text-gray-700 font-semibold mb-3">Types</h3>
+              <ul className="text-gray-600 h-40 overflow-auto flex-1 bg-gray-100 rounded">
+                {filter.dataType.map((data, index) => {
+                  return (
+                    <li key={index}>
+                      <span
+                        className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
+                        onClick={() => {
+                          setApi(data.typeLink);
+                          handleChart(data.type);
+                        }}
+                      >
+                        {data.type}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
 
-            <ul className="text-gray-600 h-full overflow-auto flex-1">
-              {filter.dataType.map((data, index) => {
-                return (
-                  <li key={index}>
-                    <span
-                      className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
-                      onClick={() => {
-                        setApi(data.typeLink);
-                        handleChart(data.type);
-                      }}
-                    >
-                      {data.type}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <ul className="text-gray-600 h-full overflow-auto flex-1">
-              {filter.dataMeetingKey.map((data, index) => {
-                return (
-                  <li key={index}>
-                    <span
-                      className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
-                      onClick={() => {
-                        setApi(data.meetingKeyLink);
-                        setChart(false);
-                      }}
-                    >
-                      {data.meetingKey}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="p-3 flex-1">
+              <h3 className="text-white font-semibold mb-3">Types</h3>
+              <ul className="text-gray-600 h-40 overflow-auto flex-1 bg-gray-100 rounded">
+                {filter.dataMeetingKey.map((data, index) => {
+                  return (
+                    <li key={index}>
+                      <span
+                        className="cursor-pointer p-1 inline-block border-b border-transparent hover:text-gray-800 hover:border-amber-950 transition"
+                        onClick={() => {
+                          setApi(data.meetingKeyLink);
+                          setChart(false);
+                        }}
+                      >
+                        {data.meetingKey}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
         </div>
-        <div className="p-4">
+        <div className="w-full mt-8 bg-white rounded p-4">
           <h2 className="text-gray-900 mb-4 p-3 text-center font-semibold text-xl">
             RACE RESULTS
           </h2>
@@ -187,7 +195,7 @@ const Page = () => {
           </table>
         </div>
         {chart && (
-          <div className="w-full">
+          <div className="w-full mt-8 bg-white rounded">
             <Chart dataChart={filter} type={type} />
           </div>
         )}

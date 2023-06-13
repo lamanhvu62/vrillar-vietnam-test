@@ -40,7 +40,7 @@ export default async function RacesLayout({
             </svg>
           </button>
           <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            {/* <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
               <li>
                 <a
                   href="#"
@@ -82,12 +82,12 @@ export default async function RacesLayout({
                   Contact
                 </a>
               </li>
-            </ul>
+            </ul> */}
           </div>
         </div>
       </nav>
       <div className="bg-gray-200">
-        <div className="h-full bg-white rounded">{children}</div>
+        <div className="h-full  max-w-screen-xl mx-auto">{children}</div>
       </div>
     </div>
   );
